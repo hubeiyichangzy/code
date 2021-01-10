@@ -5,22 +5,35 @@ using Convert = System.Convert;
 
 namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
 {
+    public class CharPair
+    {
+        public char LowerCase { get; set; }
+        public int UpperCasePos { get; set; }
+        public int LowerCasePos { get; set; }
+
+        public CharPair(char v)
+        {
+            LowerCase = v;
+            UpperCasePos = BalanceItem.INT_MIN;
+            LowerCasePos = BalanceItem.INT_MIN;
+        }
+    }
+
     public class BalanceSubString
     {
         public int SubString1(string s)
         {
             BalanceItem res = new BalanceItem();
-            List<CharPair> pairs = new List<CharPair>();
-            List<BalanceItem> m = new List<BalanceItem>();
+            List<BalanceItem> intervals = new List<BalanceItem>();
             for (int i = 0; i < s.Length; i++)
             {
                 char c = s[i];
                 char lowerCaseC = char.ToLower(c);
-                CharPair existedPair = pairs.SingleOrDefault(p => p.LowerCase == lowerCaseC);
-                CharPair pair = existedPair ?? new CharPair(lowerCaseC);
-                if (existedPair == null)
+                BalanceItem pair = intervals.SingleOrDefault(item => item.LowerCases.Contains(lowerCaseC));
+                if (pair == null)
                 {
-                    pairs.Add(pair);
+                    pair = new BalanceItem(lowerCaseC);
+                    intervals.Add(pair);
                 }
 
                 if (char.IsUpper(c))
@@ -31,30 +44,16 @@ namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
                 {
                     pair.LowerCasePos = i;
                 }
+                pair.StartPos = Min(pair.UpperCasePos, pair.LowerCasePos); //Notes: this is fantastic idea
+                pair.EndPos = Max(pair.UpperCasePos, pair.LowerCasePos);
 
-                foreach (var p in pairs)
-                {
-                    BalanceItem existedItem = m.SingleOrDefault(item => item.LowerCases.Contains(p.LowerCase));
-                    if (existedItem != null)
-                    {
-                        existedItem.StartPos = Min(p.UpperCasePos, p.LowerCasePos); //Notes: this is fantastic idea
-                        existedItem.EndPos = Max(p.UpperCasePos, p.LowerCasePos);
-                    }
-                    else
-                    {
-                        var item = new BalanceItem(p.LowerCase, Min(p.UpperCasePos, p.LowerCasePos), Max(p.UpperCasePos, p.LowerCasePos));
-                        m.Add(item);
-                    }
-                }
-
-                BalanceItem currentSmallestInterval = FindSmallestInterval(m, s);
+                BalanceItem currentSmallestInterval = FindSmallestInterval(intervals, s);
                 res = Min(res, currentSmallestInterval);
             }
 
             return res.IsUpperLowerSet()
                 ? res.Distance()
                 : -1;
-
         }
 
         public int SubString(string s)
@@ -68,7 +67,7 @@ namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
             }
 
             BalanceItem res = new BalanceItem();
-            List<BalanceItem> m = new List<BalanceItem>();
+            List<BalanceItem> intervals = new List<BalanceItem>();
             for (int i = 0; i < s.Length; i++)
             {
                 char c = s[i];
@@ -83,7 +82,7 @@ namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
 
                 for (int j = 0; j < 26; j++)
                 {
-                    BalanceItem existedItem = m.FirstOrDefault(item => item.LowerCases.Contains(Convert.ToChar('a' + j)));
+                    BalanceItem existedItem = intervals.FirstOrDefault(item => item.LowerCases.Contains(Convert.ToChar('a' + j)));
                     if (existedItem != null)
                     {
                         existedItem.StartPos = Min(upper[j], lower[j]); //Notes: this is fantastic idea
@@ -92,11 +91,11 @@ namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
                     else
                     {
                         var item = new BalanceItem(Convert.ToChar('a' + j), Min(upper[j], lower[j]), Max(upper[j], lower[j]));
-                        m.Add(item);
+                        intervals.Add(item);
                     }
                 }
 
-                BalanceItem currentSmallestInterval = FindSmallestInterval(m, s);
+                BalanceItem currentSmallestInterval = FindSmallestInterval(intervals, s);
                 res = Min(res, currentSmallestInterval);
             }
 
@@ -161,19 +160,7 @@ namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
         {
             return p1 >= p2 ? p1 : p2;
         }
-    }
-    
-    public class CharPair
-    {
-        public char LowerCase { get; set; }
-        public int UpperCasePos { get; set; }
-        public int LowerCasePos { get; set; }
 
-        public CharPair(char v)
-        {
-            LowerCase = v;
-            UpperCasePos = BalanceItem.INT_MIN;
-            LowerCasePos = BalanceItem.INT_MIN;
-        }
+
     }
 }
