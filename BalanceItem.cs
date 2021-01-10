@@ -11,6 +11,8 @@ namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
 
         private List<char> _lowerCases = new List<char>();
         private List<char> _upperCases = new List<char>();
+        public int LowerCasePos { get; set; } = INT_MIN;
+        public int UpperCasePos { get; set; } = INT_MIN;
         public int StartPos { get; set; } = INT_MIN;
         public int EndPos { get; set; } = INT_MAX;
 
@@ -25,6 +27,11 @@ namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
 
         public BalanceItem()
         {
+        }
+        public BalanceItem(char lowerCase)
+        {
+            _lowerCases.Add(lowerCase);
+            _upperCases.Add(char.ToUpper(lowerCase));
         }
 
         public BalanceItem(char lowerCase, int startPos, int endPos)
