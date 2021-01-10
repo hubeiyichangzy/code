@@ -5,20 +5,6 @@ using Convert = System.Convert;
 
 namespace DotNetFramework461Console.Algorithms.MicrosoftInterview
 {
-    public class CharPair
-    {
-        public char LowerCase { get; set; }
-        public int UpperCasePos { get; set; }
-        public int LowerCasePos { get; set; }
-
-        public CharPair(char v)
-        {
-            LowerCase = v;
-            UpperCasePos = BalanceItem.INT_MIN;
-            LowerCasePos = BalanceItem.INT_MIN;
-        }
-    }
-
     public class BalanceSubString
     {
         public int SubString1(string s)
